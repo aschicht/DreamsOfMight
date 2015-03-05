@@ -5,6 +5,7 @@ class Dungeon_room:
     def __init__(self, x, y):
         self.x1 = x
         self.y1 = y
+        self.doors = []
 
 
     def center(self):

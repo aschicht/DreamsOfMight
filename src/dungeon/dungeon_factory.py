@@ -16,7 +16,7 @@ class Dungeon_factory:
     def build_dungeon(self):
         dungeon_level = Dungeon_level(MAP_WIDTH, MAP_HEIGHT, "1")
 
-        for r in range(30):
+        for r in range(3):
             #random width and height
             w = dice.throw_dice(5, 12)
             h = dice.throw_dice(5, 12)
@@ -59,12 +59,18 @@ class Dungeon_factory:
                         #first move vertically, then horizontally
                         self._create_v_tunnel(dungeon_level.map, prev_y, new_y, prev_x)
                         self._create_h_tunnel(dungeon_level.map, prev_x, new_x, new_y)
-
+                    self.clear_room(dungeon_level.rooms[dungeon_level.room_num - 1], dungeon_level.map)
                 #finally, append the new room to the list
                 dungeon_level.rooms.append(new_room)
                 dungeon_level.room_num += 1
 
+        self.clear_room(dungeon_level.rooms[dungeon_level.room_num - 1], dungeon_level.map)
         return dungeon_level
+
+    def clear_room(self, room, map):
+        for x in range(room.x1 + 1, room.x2 - 1):
+            for y in range(room.y1 + 1, room.y2 - 1):
+                map[x][y].char = '.'
 
 
     def _create_h_tunnel(self, map, x1, x2, y):
@@ -74,11 +80,12 @@ class Dungeon_factory:
             map[x][y + 1].block_sight = False
             map[x][y - 1].blocked = False
             map[x][y - 1].block_sight = False
-            map[x][y + 1].char = '$'
-            map[x][y - 1].char = '%'
+            map[x][y + 1].char = '#'
+            map[x][y - 1].char = '#'
             map[x][y + 1].color = libtcod_color.get_white()
             map[x][y - 1].color = libtcod_color.get_white()
-
+            map[x][y].color = libtcod_color.get_white()
+            map[x][y].char = '.'
 
 
     def _create_v_tunnel(self, map, y1, y2, x):
@@ -88,10 +95,12 @@ class Dungeon_factory:
             map[x + 1][y].block_sight = False
             map[x - 1][y].blocked = False
             map[x - 1][y].block_sight = False
-            map[x + 1][y].char = '$'
-            map[x - 1][y].char = '%'
+            map[x + 1][y].char = '#'
+            map[x - 1][y].char = '#'
             map[x + 1][y].color = libtcod_color.get_white()
             map[x - 1][y].color = libtcod_color.get_white()
+            map[x][y].color = libtcod_color.get_white()
+            map[x][y].char = '.'
 
 
     def _create_room(self, map, room):
