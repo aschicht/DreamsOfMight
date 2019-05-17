@@ -1,7 +1,6 @@
 __author__ = 'rumm'
 
-from wrapper import libtcod_painter, libtcod_color
-
+from DreamsOfMight.engine.wrapper import libtcod_painter, libtcod_color
 
 #abstract class defining behaviour for a drawable object
 class Drawable:

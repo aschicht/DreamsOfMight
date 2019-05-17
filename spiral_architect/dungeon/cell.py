@@ -1,6 +1,6 @@
 __author__ = 'rumm'
 
-from src.drawable import Drawable
+from DreamsOfMight.game.drawable import Drawable
 
 class Cell(Drawable):
     def __init__(self, x, y, char, color):

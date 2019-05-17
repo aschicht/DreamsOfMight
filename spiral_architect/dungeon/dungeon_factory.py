@@ -1,11 +1,11 @@
 __author__ = 'rumm'
 
-from dungeon_level import Dungeon_level
-from src.wrapper import dice
+from DreamsOfMight.spiral_architect.dungeon.dungeon_level import Dungeon_level
+from DreamsOfMight.engine.wrapper import dice
 from dungeon_rect_room import Dungeon_rect_room
 from cell import Cell
-from src.wrapper import libtcod_color
-from src.config import MAP_HEIGHT, MAP_WIDTH
+from DreamsOfMight.engine.wrapper import libtcod_color
+from DreamsOfMight.game.config import MAP_HEIGHT, MAP_WIDTH
 
 
 class Dungeon_factory:

@@ -1,6 +1,6 @@
 __author__ = 'rumm'
 
-import libtcodpy as libtcod
+import tcod as libtcod
 
 def paint_char(con, x, y, char, color, bk_color):
     #libtcod.console_set_default_foreground(con, color)

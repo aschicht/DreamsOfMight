@@ -1,6 +1,6 @@
 __author__ = 'rumm'
 
-import libtcodpy as libtcod
+import tcod as libtcod
 
 def get_color(r,g,b):
     return libtcod.Color(r,g,b)

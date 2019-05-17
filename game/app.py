@@ -1,7 +1,7 @@
 __author__ = 'rumm'
 
 from dungeon.dungeon_factory import Dungeon_factory
-import libtcodpy as libtcod
+import tcod as libtcod
 from config import MAP_WIDTH, MAP_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH
 
 

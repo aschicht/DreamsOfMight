@@ -1,8 +1,8 @@
 __author__ = 'rumm'
 
 from cell import Cell
-from src.wrapper import libtcod_painter
-from src.wrapper import libtcod_color
+from DreamsOfMight.engine.wrapper import libtcod_painter
+from DreamsOfMight.engine.wrapper import libtcod_color
 
 class Mapable:
     def __init__(self, width, height, id):
