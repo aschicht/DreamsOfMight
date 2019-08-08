@@ -1,4 +1,7 @@
 import tcod as libtcod
+
+from dungeon_type import DungeonType
+from factory.dungeon_factory import make_dungeon
 from input_handlers import handle_keys
 from hellraiser.someone import Someone
 from render_functions import clear_all, render_all
@@ -13,12 +16,7 @@ class Engine:
         map_width = 80
         map_height = 45
 
-        colors = {
-            'dark_wall': libtcod.Color(0, 0, 100),
-            'dark_ground': libtcod.Color(50, 50, 150)
-        }
-
-        player = Someone(int(screen_width / 2), int(screen_height / 2), '@', libtcod.white)
+        player = Someone(int(screen_width / 2), int(screen_height / 2), '@', libtcod.blue)
         npc = Someone(int(screen_width / 2 - 5), int(screen_height / 2), '@', libtcod.yellow)
         entities = [npc, player]
 
@@ -28,7 +26,9 @@ class Engine:
 
         con = libtcod.console_new(screen_width, screen_height)
 
-        dungeon = Dungeon(map_width, map_height)
+        dungeon = make_dungeon(DungeonType.SIMPLE, map_width, map_height)
+        player.x = dungeon.initial_player_x
+        player.y = dungeon.initial_player_y
 
         key = libtcod.Key()
         mouse = libtcod.Mouse()
@@ -36,7 +36,7 @@ class Engine:
         while not libtcod.console_is_window_closed():
             libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
 
-            render_all(con, entities, dungeon, screen_width, screen_height, colors)
+            render_all(con, entities, dungeon, screen_width, screen_height)
             libtcod.console_flush()
 
             clear_all(con, entities)

@@ -1,21 +1,20 @@
-from tile import Tile
+from tile import Tile, VoidTile
 
 
 class Dungeon:
-    def __init__(self, width, height):
+    def __init__(self, width, height, room_max_size, room_min_size, max_rooms):
         self.width = width
         self.height = height
+        self.room_max_size = room_max_size
+        self.room_min_size = room_min_size
+        self.max_rooms = max_rooms
         self.tiles = self.initialize_tiles()
 
-    def initialize_tiles(self):
-        tiles = [[Tile(False) for y in range(self.height)] for x in range(self.width)]
+        self.initial_player_x = 0
+        self.initial_player_y = 0
 
-        tiles[30][22].blocked = True
-        tiles[30][22].block_sight = True
-        tiles[31][22].blocked = True
-        tiles[31][22].block_sight = True
-        tiles[32][22].blocked = True
-        tiles[32][22].block_sight = True
+    def initialize_tiles(self):
+        tiles = [[VoidTile() for y in range(self.height)] for x in range(self.width)]
 
         return tiles
 
