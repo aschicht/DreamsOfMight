@@ -4,9 +4,6 @@ from element.rectangle import Rectangle
 from factory.element_factory import create_room, create_h_tunnel, create_v_tunnel
 from random import randint
 
-from factory.helper import smooth_edges
-from tile import WallTile
-
 
 class DungeonBuilder:
     def __init__(self, type, height=50, width=80):
