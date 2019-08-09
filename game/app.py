@@ -1,3 +1,5 @@
+import sys
+
 from engine import Engine
 
 __author__ = 'rumm'
@@ -8,7 +10,11 @@ class App:
         self.engine = Engine()
 
     def run(self):
-        self.engine.run()
+        if len(sys.argv) > 0:
+            if sys.argv[1] == "--step":
+                self.engine.run_step_dungeon()
+        else:
+            self.engine.run()
 
 
 def main():

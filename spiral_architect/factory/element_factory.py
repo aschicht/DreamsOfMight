@@ -5,7 +5,8 @@ def create_room(drawable, room):
     # go through the tiles in the rectangle and make them passable
     for x in [room.x1, room.x2]:
         for y in [room.y1, room.y2]:
-            drawable.tiles[x][y] = WallTile()
+            if not isinstance(drawable.tiles[x][y], FloorTile):
+                drawable.tiles[x][y] = WallTile()
 
     for x in range(room.x1, room.x2 + 1):
         for y in range(room.y1, room.y2 + 1):

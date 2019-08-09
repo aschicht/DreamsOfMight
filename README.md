@@ -55,3 +55,15 @@ From then on anyone can follow the instructions to install python-tcod and your 
 Distributing
 
 Once your project is finished, it can be distributed using PyInstaller.
+
+
+Running
+--------
+
+Run as 
+
+    python3 game/app.py
+
+options;
+
+* --step: Create dungeon in steps 
