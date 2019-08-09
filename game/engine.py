@@ -1,10 +1,11 @@
 import tcod as libtcod
 
 from dungeon_type import DungeonType
-from factory.dungeon_builder import DungeonBuilder
+from factory.dungeon_builder import DungeonLevelBuilder
 from field_of_view import initialize_fov, recompute_fov
 from input_handlers import handle_keys
 from hellraiser.someone import Someone
+from overlord import DungeonOverlord
 from render_functions import clear_all, render_all, render_all_without_fov
 
 
@@ -26,14 +27,11 @@ class Engine:
 
         con = libtcod.console_new(screen_width, screen_height)
 
-        dungeon = DungeonBuilder(DungeonType.SIMPLE, map_height, map_width)\
-                        .with_max_rooms(30)\
-                        .with_room_sizes(6, 10)\
-                        .build_dungeon()
+        dungeon = DungeonOverlord(1).build_dungeon()
 
-        fov_map = initialize_fov(dungeon)
-        player.x = dungeon.initial_player_x
-        player.y = dungeon.initial_player_y
+        fov_map = initialize_fov(dungeon.dungeon_levels[0])
+        player.x = dungeon.dungeon_levels[0].initial_player_x
+        player.y = dungeon.dungeon_levels[0].initial_player_y
 
         key = libtcod.Key()
         mouse = libtcod.Mouse()
@@ -44,7 +42,7 @@ class Engine:
             if fov_recompute:
                 recompute_fov(fov_map, player.x, player.y, 10)
 
-            render_all(con, entities, dungeon, screen_width, screen_height, fov_recompute, fov_map)
+            render_all(con, entities, dungeon.dungeon_levels[0], screen_width, screen_height, fov_recompute, fov_map)
             fov_recompute = False
 
             libtcod.console_flush()
@@ -59,7 +57,7 @@ class Engine:
 
             if move:
                 dx, dy = move
-                if not dungeon.is_blocked(player.x + dx, player.y + dy):
+                if not dungeon.dungeon_levels[0].is_blocked(player.x + dx, player.y + dy):
                     player.move(dx, dy)
                     fov_recompute = True
             if exit:
@@ -83,10 +81,10 @@ class Engine:
 
         con = libtcod.console_new(screen_width, screen_height)
 
-        builder, dungeon = DungeonBuilder(DungeonType.SIMPLE, map_height, map_width)\
+        builder, dungeon = DungeonLevelBuilder(DungeonType.SIMPLE, map_height, map_width)\
                     .with_max_rooms(30)\
                     .with_room_sizes(6,10)\
-                    .build_dungeon_in_steps()
+                    .build_dungeon_level_in_steps()
 
         player.x = dungeon.initial_player_x
         player.y = dungeon.initial_player_y
@@ -110,7 +108,7 @@ class Engine:
             step = action.get('step')
 
             if step:
-                builder.build_dungeon_in_steps()
+                builder.build_dungeon_level_in_steps()
 
             if move:
                 dx, dy = move

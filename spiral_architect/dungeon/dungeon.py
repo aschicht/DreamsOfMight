@@ -1,7 +1,7 @@
 from tile import Tile, VoidTile
 
 
-class Dungeon:
+class DungeonLevel:
     def __init__(self, width, height, room_max_size, room_min_size, max_rooms):
         self.width = width
         self.height = height
@@ -23,3 +23,10 @@ class Dungeon:
             return True
 
         return False
+
+
+class Dungeon:
+    def __init__(self, overlord):
+        self.dungeon_levels = []
+        self.overlord = overlord
+

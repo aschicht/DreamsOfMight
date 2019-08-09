@@ -1,11 +1,11 @@
-from dungeon.dungeon import Dungeon
+from dungeon.dungeon import Dungeon, DungeonLevel
 from dungeon_type import DungeonType
 from element.rectangle import Rectangle
 from factory.element_factory import create_room, create_h_tunnel, create_v_tunnel
 from random import randint
 
 
-class DungeonBuilder:
+class DungeonLevelBuilder:
     def __init__(self, type, height=50, width=80):
         self.type = type
         self.height = height
@@ -15,25 +15,25 @@ class DungeonBuilder:
         self.room_min_size = 6
         self.rooms = []
         self.num_rooms = 0
-        self.dungeon = None
+        self.dungeon_level = None
 
-    def _build_simple_dungeon(self):
-        self.dungeon = Dungeon(self.width, self.height, self.room_max_size, self.room_min_size, self.max_rooms)
+    def _build_simple_dungeon_level(self):
+        self.dungeon_level = DungeonLevel(self.width, self.height, self.room_max_size, self.room_min_size, self.max_rooms)
 
         for r in range(self.max_rooms):
-            self._simple_dungeon_step()
+            self._simple_dungeon_level_step()
 
-        return self.dungeon
+        return self.dungeon_level
 
-    def _build_simple_dungeon_in_steps(self):
-        if not self.dungeon:
-            self.dungeon = Dungeon(self.width, self.height, self.room_max_size, self.room_min_size, self.max_rooms)
+    def _build_simple_dungeon_level_in_steps(self):
+        if not self.dungeon_level:
+            self.dungeon_level = DungeonLevel(self.width, self.height, self.room_max_size, self.room_min_size, self.max_rooms)
 
-        self._simple_dungeon_step()
+        self._simple_dungeon_level_step()
 
-        return self.dungeon
+        return self.dungeon_level
 
-    def _simple_dungeon_step(self):
+    def _simple_dungeon_level_step(self):
         # random width and height
         w = randint(self.room_min_size, self.room_max_size)
         h = randint(self.room_min_size, self.room_max_size)
@@ -50,15 +50,15 @@ class DungeonBuilder:
             # this means there are no intersections, so this room is valid
 
             # "paint" it to the map's tiles
-            create_room(self.dungeon, new_room)
+            create_room(self.dungeon_level, new_room)
 
             # center coordinates of new room, will be useful later
             (new_x, new_y) = new_room.center()
 
             if self.num_rooms == 0:
                 # this is the first room, where the player starts at
-                self.dungeon.initial_player_x = new_x
-                self.dungeon.initial_player_y = new_y
+                self.dungeon_level.initial_player_x = new_x
+                self.dungeon_level.initial_player_y = new_y
             else:
                 # all rooms after the first:
                 # connect it to the previous room with a tunnel
@@ -69,25 +69,25 @@ class DungeonBuilder:
                 # flip a coin (random number that is either 0 or 1)
                 if randint(0, 1) == 1:
                     # first move horizontally, then vertically
-                    create_h_tunnel(self.dungeon, prev_x, new_x, prev_y)
-                    create_v_tunnel(self.dungeon, prev_y, new_y, new_x)
+                    create_h_tunnel(self.dungeon_level, prev_x, new_x, prev_y)
+                    create_v_tunnel(self.dungeon_level, prev_y, new_y, new_x)
                 else:
                     # first move vertically, then horizontally
-                    create_v_tunnel(self.dungeon, prev_y, new_y, prev_x)
-                    create_h_tunnel(self.dungeon, prev_x, new_x, new_y)
+                    create_v_tunnel(self.dungeon_level, prev_y, new_y, prev_x)
+                    create_h_tunnel(self.dungeon_level, prev_x, new_x, new_y)
 
             # finally, append the new room to the list
             self.rooms.append(new_room)
             self.num_rooms += 1
 
-    def build_dungeon(self):
+    def build_dungeon_level(self):
 
         if self.type == DungeonType.SIMPLE:
-            return self._build_simple_dungeon()
+            return self._build_simple_dungeon_level()
 
-    def build_dungeon_in_steps(self):
+    def build_dungeon_level_in_steps(self):
         if self.type == DungeonType.SIMPLE:
-            return self, self._build_simple_dungeon_in_steps()
+            return self, self._build_simple_dungeon_level_in_steps()
 
     def with_max_rooms(self, max_rooms):
         self.max_rooms = max_rooms
@@ -96,4 +96,23 @@ class DungeonBuilder:
     def with_room_sizes(self, min, max):
         self.room_max_size = max
         self.room_min_size = min
+        return self
+
+
+class DungeonBuilder:
+    def __init__(self, overlord):
+        self.overlord = overlord
+        self.dungeon = None
+        self.dungeon_level_builders = []
+
+    def build_dungeon(self):
+        self.dungeon = Dungeon(self.overlord)
+
+        for builder in self.dungeon_level_builders:
+            self.dungeon.dungeon_levels.append(builder.build_dungeon_level())
+
+        return self.dungeon
+
+    def with_dungeon_level_builders(self, dungeon_level_builders):
+        self.dungeon_level_builders = dungeon_level_builders
         return self
