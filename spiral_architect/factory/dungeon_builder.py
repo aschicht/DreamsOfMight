@@ -4,6 +4,9 @@ from element.rectangle import Rectangle
 from factory.element_factory import create_room, create_h_tunnel, create_v_tunnel
 from random import randint
 
+from factory.helper import smooth_edges
+from tile import WallTile
+
 
 class DungeonBuilder:
     def __init__(self, type, height=50, width=80):
@@ -76,7 +79,7 @@ class DungeonBuilder:
                     create_v_tunnel(self.dungeon, prev_y, new_y, prev_x)
                     create_h_tunnel(self.dungeon, prev_x, new_x, new_y)
 
-                # finally, append the new room to the list
+            # finally, append the new room to the list
             self.rooms.append(new_room)
             self.num_rooms += 1
 
