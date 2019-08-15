@@ -11,7 +11,7 @@ class Tile(Drawable):
         self.blocked = blocked
         self.tile_type = tile_type
         self.block_sight = block_sight
-        self.explored = False
+        self.explored = True
 
     def render(self, **kargs):
         pass
@@ -23,7 +23,7 @@ class WallTile(Tile):
         super().__init__(True, True, TileType.WALL)
 
     def render(self, **kargs):
-        return RenderData('#', TileColor.DARK_GREY, TileColor.DARK_GREY, TileColor.BLACK, TileColor.BLACK)
+        return RenderData('#', TileColor.LIGHT_GREY, TileColor.DARK_GREY, TileColor.BLACK, TileColor.BLACK)
 
 
 class VoidTile(Tile):
@@ -41,3 +41,21 @@ class FloorTile(Tile):
 
     def render(self, **kargs):
         return RenderData('.', TileColor.LIGHT_ORANGE, TileColor.WHITE, TileColor.BLACK, TileColor.BLACK)
+
+
+class StairwayTile(Tile):
+    def __init__(self):
+        super().__init__(False, False, TileType.GATEWAY)
+
+    def render(self, **kargs):
+        pass
+
+
+class UpStairwayTile(StairwayTile):
+    def render(self, **kargs):
+        return RenderData('>', TileColor.LIGHT_ORANGE, TileColor.WHITE, TileColor.BLACK, TileColor.BLACK)
+
+
+class DownStairwayTile(StairwayTile):
+    def render(self, **kargs):
+        return RenderData('<', TileColor.LIGHT_ORANGE, TileColor.WHITE, TileColor.BLACK, TileColor.BLACK)

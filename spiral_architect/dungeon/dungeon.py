@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from tile import Tile, VoidTile
 
 
@@ -12,6 +14,7 @@ class DungeonLevel:
 
         self.initial_player_x = 0
         self.initial_player_y = 0
+        self.id = uuid4()
 
     def initialize_tiles(self):
         tiles = [[VoidTile() for y in range(self.height)] for x in range(self.width)]
@@ -24,9 +27,19 @@ class DungeonLevel:
 
         return False
 
+    def handle_action(self, action):
+        pass
+
 
 class Dungeon:
     def __init__(self, overlord):
-        self.dungeon_levels = []
+        self.dungeon_levels=[]
+        self.dungeon_levels_by_id = {}
         self.overlord = overlord
+        self.current_level = 0
+        self.id = uuid4()
+
+    def add_dungeon_level(self, dungeon_level):
+        self.dungeon_levels_by_id[dungeon_level.id] = dungeon_level
+        self.dungeon_levels.append(dungeon_level)
 

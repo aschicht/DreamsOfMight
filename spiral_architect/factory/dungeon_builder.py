@@ -4,6 +4,8 @@ from element.rectangle import Rectangle
 from factory.element_factory import create_room, create_h_tunnel, create_v_tunnel
 from random import randint
 
+from tile import UpStairwayTile, DownStairwayTile
+
 
 class DungeonLevelBuilder:
     def __init__(self, type, height=50, width=80):
@@ -16,12 +18,23 @@ class DungeonLevelBuilder:
         self.rooms = []
         self.num_rooms = 0
         self.dungeon_level = None
+        self.challenge_rating = 0
+        self.monster_populator = None
+        self.item_populator = None
+        self.downward_stairs = 0
+        self.upward_stairs = 1
 
     def _build_simple_dungeon_level(self):
         self.dungeon_level = DungeonLevel(self.width, self.height, self.room_max_size, self.room_min_size, self.max_rooms)
 
         for r in range(self.max_rooms):
             self._simple_dungeon_level_step()
+
+        for s in range(self.upward_stairs):
+            self._add_stairs(UpStairwayTile())
+
+        for s in range(self.downward_stairs):
+            self._add_stairs(DownStairwayTile())
 
         return self.dungeon_level
 
@@ -98,6 +111,32 @@ class DungeonLevelBuilder:
         self.room_min_size = min
         return self
 
+    def with_challenge_raiting(self, cr):
+        self.challenge_rating = cr
+        return self
+
+    def with_monster_populator(self, m):
+        self.monster_populator = m
+        return self
+
+    def with_item_populator(self, i):
+        self.item_populator = i
+        return self
+
+    def with_downward_stairs(self, i):
+        self.downward_stairs = i
+        return self
+
+    def with_upward_stairs(self, i):
+        self.upward_stairs = i
+        return self
+
+    def _add_stairs(self, stair_tile):
+        i = randint(0, len(self.rooms) - 1)
+        room = self.rooms[i]
+        c = room.center()
+        self.dungeon_level.tiles[c[0]][c[1]] = stair_tile
+
 
 class DungeonBuilder:
     def __init__(self, overlord):
@@ -109,7 +148,7 @@ class DungeonBuilder:
         self.dungeon = Dungeon(self.overlord)
 
         for builder in self.dungeon_level_builders:
-            self.dungeon.dungeon_levels.append(builder.build_dungeon_level())
+            self.dungeon.add_dungeon_level(builder.build_dungeon_level())
 
         return self.dungeon
 
