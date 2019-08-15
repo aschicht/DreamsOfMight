@@ -1,5 +1,6 @@
-from dungeon.dungeon import Dungeon, DungeonLevel
+from dungeon.dungeon import DungeonLevel
 from dungeon_type import DungeonType
+from element.gateway import Gateway
 from element.rectangle import Rectangle
 from factory.element_factory import create_room, create_h_tunnel, create_v_tunnel
 from random import randint
@@ -31,10 +32,14 @@ class DungeonLevelBuilder:
             self._simple_dungeon_level_step()
 
         for s in range(self.upward_stairs):
-            self._add_stairs(UpStairwayTile())
+            tile = UpStairwayTile()
+            pos = self._add_stairs(tile)
+            self.dungeon_level.upward_stairs[tile.id] = Gateway(tile, pos)
 
         for s in range(self.downward_stairs):
-            self._add_stairs(DownStairwayTile())
+            tile = DownStairwayTile()
+            pos = self._add_stairs(tile)
+            self.dungeon_level.downward_stairs[tile.id] = Gateway(tile, pos)
 
         return self.dungeon_level
 
@@ -136,22 +141,4 @@ class DungeonLevelBuilder:
         room = self.rooms[i]
         c = room.center()
         self.dungeon_level.tiles[c[0]][c[1]] = stair_tile
-
-
-class DungeonBuilder:
-    def __init__(self, overlord):
-        self.overlord = overlord
-        self.dungeon = None
-        self.dungeon_level_builders = []
-
-    def build_dungeon(self):
-        self.dungeon = Dungeon(self.overlord)
-
-        for builder in self.dungeon_level_builders:
-            self.dungeon.add_dungeon_level(builder.build_dungeon_level())
-
-        return self.dungeon
-
-    def with_dungeon_level_builders(self, dungeon_level_builders):
-        self.dungeon_level_builders = dungeon_level_builders
-        return self
+        return c

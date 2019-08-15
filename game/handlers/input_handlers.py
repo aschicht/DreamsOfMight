@@ -24,6 +24,7 @@ class ActionType(Enum):
     USE = 4
     QUIT = 5
     DUNGEON_STEP = 6
+    TRAVEL = 7
 
 
 InputHandlerAction = collections.namedtuple('InputHandlerAction', ['action_type', 'action'])
@@ -88,6 +89,8 @@ class MapConsoleHandler(ConsoleEventHandler, ConsoleActionHandler):
         if event_stack[0].vk == libtcod.KEY_CHAR:
             if chr(event_stack[0].c) == 'u':
                 return InputHandlerAction(InputHandlerActionType.ACTION, ActionType.USE)
+            if chr(event_stack[0].c) == '<':
+                return InputHandlerAction(InputHandlerActionType.ACTION, ActionType.TRAVEL)
 
         return InputHandlerAction(InputHandlerActionType.CLEAR_STACK, None)
 
@@ -100,6 +103,9 @@ class MapConsoleHandler(ConsoleEventHandler, ConsoleActionHandler):
             self.engine_model.exit = True
         elif action == ActionType.USE:
             print("use")
+        elif action == ActionType.TRAVEL:
+            gateway_tile = self.engine_model.current_map.tiles[self.engine_model.player.x][self.engine_model.player.y]
+            self.engine_model.switch_map(gateway_tile.id)
 
     def move_player(self, action):
         player = self.engine_model.player

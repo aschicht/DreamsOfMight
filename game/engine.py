@@ -1,32 +1,42 @@
 import tcod as libtcod
 
-from actionable import Action
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, MAP_WIDTH, MAP_HEIGHT
 from dungeon_type import DungeonType
 from factory.dungeon_builder import DungeonLevelBuilder
 from field_of_view import initialize_fov, recompute_fov
 from handlers.input_handlers import InputHandler
-from hellraiser.someone import Someone
+from hellraiser.entity import Entity
 from darklord import DarkLord
 from render_functions import clear_all, render_all, render_all_without_fov
-from tile_type import TileType
-from world.world import World
 
 
 class EngineModel:
     def __init__(self):
-        self.screen_width = 160
-        self.screen_height = 80
-        self.map_width = 160
-        self.map_height = 70
+        self.screen_width = SCREEN_WIDTH
+        self.screen_height = SCREEN_HEIGHT
+        self.map_width = MAP_WIDTH
+        self.map_height = MAP_HEIGHT
         self.fov_recompute = True
-        self.player = Someone(int(self.screen_width / 2), int(self.screen_height / 2), '@', libtcod.blue)
-        self.entities = [self.player]
-        self.world = World()
-        self.dungeon = DarkLord(1).build_dungeon()
-        self.current_map = self.dungeon.dungeon_levels[0]
-        self.fov_map = initialize_fov(self.dungeon.dungeon_levels[0])
+        self.player = Entity(int(self.screen_width / 2), int(self.screen_height / 2), '@', libtcod.blue)
+        self.darklord = DarkLord()
         self.input_handler = InputHandler(self)
         self.exit = False
+
+        self.darklord.build_dungeon()
+        self.current_overlord = self.darklord.get_overlord()
+        self.current_map = self.current_overlord.dungeon_levels[0]
+        self.fov_map = initialize_fov(self.current_map)
+        self.current_map.entities.append(self.player)
+
+    def switch_map(self, map_id):
+        self.current_map.remove_entity(self.player)
+        self.current_overlord, self.current_map, pos = self.darklord.get_map_and_overlord(map_id)
+        self.fov_map = initialize_fov(self.current_map)
+        self.current_map.entities.append(self.player)
+        self.player.x = pos[0]
+        self.player.y = pos[1]
+        self.fov_recompute = True
+
 
 class Engine:
 
@@ -41,8 +51,8 @@ class Engine:
 
         con = libtcod.console_new(self.model.screen_width, self.model.screen_height)
 
-        self.model.player.x = self.model.dungeon.dungeon_levels[0].initial_player_x
-        self.model.player.y = self.model.dungeon.dungeon_levels[0].initial_player_y
+        self.model.player.x = self.model.current_map.initial_player_x
+        self.model.player.y = self.model.current_map.initial_player_y
 
         key = libtcod.Key()
         mouse = libtcod.Mouse()
@@ -52,12 +62,12 @@ class Engine:
             if self.model.fov_recompute:
                 recompute_fov(self.model.fov_map, self.model.player.x, self.model.player.y, 10)
 
-            render_all(con, self.model.entities, self.model.dungeon.dungeon_levels[0], self.model.screen_width,
+            render_all(con, self.model.current_map.get_entities(), self.model.current_map, self.model.screen_width,
                        self.model.screen_height, self.model.fov_recompute, self.model.fov_map)
 
             self.model.fov_recompute = False
 
-            clear_all(con, self.model.entities)
+            clear_all(con, self.model.current_map.get_entities())
 
             libtcod.console_flush()
             libtcod.sys_wait_for_event(libtcod.EVENT_KEY_PRESS, key, mouse, True)

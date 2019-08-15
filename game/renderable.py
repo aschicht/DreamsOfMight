@@ -7,3 +7,15 @@ class Drawable:
 
     def render(self, **kargs):
         pass
+
+
+class Renderable:
+
+    def get_tiles(self):
+        pass
+
+    def get_items(self):
+        pass
+
+    def get_entities(self):
+        pass

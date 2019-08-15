@@ -1,9 +1,10 @@
 from uuid import uuid4
 
+from renderable import Renderable
 from tile import Tile, VoidTile
 
 
-class DungeonLevel:
+class DungeonLevel(Renderable):
     def __init__(self, width, height, room_max_size, room_min_size, max_rooms):
         self.width = width
         self.height = height
@@ -11,10 +12,13 @@ class DungeonLevel:
         self.room_min_size = room_min_size
         self.max_rooms = max_rooms
         self.tiles = self.initialize_tiles()
+        self.entities = []
 
         self.initial_player_x = 0
         self.initial_player_y = 0
         self.id = uuid4()
+        self.upward_stairs = {}
+        self.downward_stairs = {}
 
     def initialize_tiles(self):
         tiles = [[VoidTile() for y in range(self.height)] for x in range(self.width)]
@@ -30,16 +34,20 @@ class DungeonLevel:
     def handle_action(self, action):
         pass
 
+    def get_tiles(self):
+        return self.tiles
 
-class Dungeon:
-    def __init__(self, overlord):
-        self.dungeon_levels=[]
-        self.dungeon_levels_by_id = {}
-        self.overlord = overlord
-        self.current_level = 0
-        self.id = uuid4()
+    def get_items(self):
+        pass
 
-    def add_dungeon_level(self, dungeon_level):
-        self.dungeon_levels_by_id[dungeon_level.id] = dungeon_level
-        self.dungeon_levels.append(dungeon_level)
+    def get_entities(self):
+        return self.entities
 
+    def get_downward_stairs(self):
+        return list(self.downward_stairs.values())
+
+    def get_upward_stairs(self):
+        return list(self.upward_stairs.values())
+
+    def remove_entity(self, entity):
+        self.entities.remove(entity)

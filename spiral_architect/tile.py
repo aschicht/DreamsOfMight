@@ -1,4 +1,6 @@
-from drawable import RenderData, Drawable
+from uuid import uuid4
+
+from renderable import RenderData, Drawable
 from tile_color import TileColor
 from tile_type import TileType
 
@@ -46,6 +48,7 @@ class FloorTile(Tile):
 class StairwayTile(Tile):
     def __init__(self):
         super().__init__(False, False, TileType.GATEWAY)
+        self.id = uuid4()
 
     def render(self, **kargs):
         pass

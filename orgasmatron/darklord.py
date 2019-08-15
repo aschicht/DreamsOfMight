@@ -1,25 +1,30 @@
-from config import MAP_HEIGHT, MAP_WIDTH
-from dungeon_type import DungeonType
-from factory.dungeon_builder import DungeonBuilder, DungeonLevelBuilder
-
+from heimdall import Heimdall
+from overlord import Overlord
+from world.world import World
 
 """
 Dark Lord is the world controller
 """
+
+
 class DarkLord:
-    def __init__(self, challenge_raiting):
-        self.challege_raiting = challenge_raiting
+    def __init__(self):
 
-    def populate_room_with_monsters(self):
-        pass
+        self.world = World()
+        self.overlords = {}
 
-    def populate_room_with_items(self):
-        pass
+    def get_map_and_overlord(self, map_id):
+        gateway_data = Heimdall.get_gateway(map_id)
+        overlord = self.overlords.get(gateway_data.controller_id)
+        return overlord, overlord.dungeon_levels_by_id.get(gateway_data.map_id), gateway_data.entry_point_position
 
     def build_dungeon(self):
-        dungeon = DungeonBuilder(self).with_dungeon_level_builders([
-            DungeonLevelBuilder(DungeonType.SIMPLE, height=MAP_HEIGHT, width=MAP_WIDTH).with_room_sizes(6,10).with_max_rooms(30)
-                .with_upward_stairs(1).with_downward_stairs(1)
-        ]).build_dungeon()
+        overlord = Overlord()
+        overlord.build_dungeon()
+        self.overlords[overlord.id] = overlord
 
-        return dungeon
+    def get_dungeon_level(self):
+        return list(self.overlords.values())[0].dungeon_levels[0]
+
+    def get_overlord(self):
+        return list(self.overlords.values())[0]
