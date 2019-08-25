@@ -120,6 +120,15 @@ class MapConsoleHandler(ConsoleEventHandler, ConsoleActionHandler):
             dx = -1
         elif action == ActionType.MOVE_RIGHT:
             dx = 1
-        if not map.tiles[player.x + dx][player.y + dy].blocked:
+
+        blocked, entity = map.is_blocked(player.x + dx, player.y + dy)
+        if not blocked:
             player.move(dx, dy)
             self.engine_model.fov_recompute = True
+        elif entity:
+            self.attack(entity)
+        else:
+            print('Ouch!')
+
+    def attack(self, entity):
+        print('Die yeh bastard!')

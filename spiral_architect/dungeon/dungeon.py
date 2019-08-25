@@ -27,9 +27,11 @@ class DungeonLevel(Renderable):
 
     def is_blocked(self, x, y):
         if self.tiles[x][y].blocked:
-            return True
-
-        return False
+           return True, None
+        blocking_entities = [entity for entity in self.entities if entity.x == x and entity.y == y]
+        if any(blocking_entities):
+            return True, blocking_entities[0]
+        return False, None
 
     def handle_action(self, action):
         pass

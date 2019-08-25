@@ -33,10 +33,8 @@ def render_all(con, entities, game_map, screen_width, screen_height, fov_recompu
                 elif game_map.tiles[x][y].explored:
                     libtcod.console_set_char_background(con, x, y, tile_render_data.background_dark_color.value.rgb, libtcod.BKGND_SET)
                     libtcod.console_set_default_foreground(con,  tile_render_data.foreground_dark_color.value.rgb)
-
                 else:
-                    libtcod.console_set_char_background(con, x, y, libtcod.black,
-                                                        libtcod.BKGND_SET)
+                    libtcod.console_set_char_background(con, x, y, libtcod.black, libtcod.BKGND_SET)
                     libtcod.console_set_default_foreground(con, libtcod.black)
                 libtcod.console_put_char(con, x, y, tile_render_data.representation, libtcod.BKGND_NONE)
 
@@ -47,9 +45,9 @@ def render_all(con, entities, game_map, screen_width, screen_height, fov_recompu
     libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
 
 
-def clear_all(con, entities):
+def clear_all(con, entities, fov_map):
     for entity in entities:
-        clear_entity(con, entity)
+        clear_entity(con, entity, fov_map)
 
 
 def draw_entity_without_fov(con, entity):
@@ -58,9 +56,10 @@ def draw_entity_without_fov(con, entity):
 
 def draw_entity(con, entity, fov_map):
     if libtcod.map_is_in_fov(fov_map, entity.x, entity.y):
-        libtcod.console_set_default_foreground(con, entity.color)
+        libtcod.console_set_default_foreground(con, entity.render().foreground_light_color)
         libtcod.console_put_char(con, entity.x, entity.y, entity.char, libtcod.BKGND_NONE)
 
-def clear_entity(con, entity):
+def clear_entity(con, entity, fov_map):
     # erase the character that represents this object
-    libtcod.console_put_char(con, entity.x, entity.y, ' ', libtcod.BKGND_NONE)
+    if libtcod.map_is_in_fov(fov_map, entity.x, entity.y):
+        libtcod.console_put_char(con, entity.x, entity.y, ' ', libtcod.BKGND_NONE)

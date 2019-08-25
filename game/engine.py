@@ -7,6 +7,7 @@ from field_of_view import initialize_fov, recompute_fov
 from handlers.input_handlers import InputHandler
 from hellraiser.entity import Entity
 from darklord import DarkLord
+from player import Player
 from render_functions import clear_all, render_all, render_all_without_fov
 
 
@@ -17,7 +18,7 @@ class EngineModel:
         self.map_width = MAP_WIDTH
         self.map_height = MAP_HEIGHT
         self.fov_recompute = True
-        self.player = Entity(int(self.screen_width / 2), int(self.screen_height / 2), '@', libtcod.blue)
+        self.player = Player('@', libtcod.white)
         self.darklord = DarkLord()
         self.input_handler = InputHandler(self)
         self.exit = False
@@ -67,7 +68,7 @@ class Engine:
 
             self.model.fov_recompute = False
 
-            clear_all(con, self.model.current_map.get_entities())
+            clear_all(con, self.model.current_map.get_entities(), self.model.fov_map)
 
             libtcod.console_flush()
             libtcod.sys_wait_for_event(libtcod.EVENT_KEY_PRESS, key, mouse, True)

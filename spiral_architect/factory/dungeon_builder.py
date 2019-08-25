@@ -41,6 +41,11 @@ class DungeonLevelBuilder:
             pos = self._add_stairs(tile)
             self.dungeon_level.downward_stairs[tile.id] = Gateway(tile, pos)
 
+        self.dungeon_level.entities = self.monster_populator.initial_population()
+
+        for m in self.dungeon_level.entities:
+            self.place_monster(m)
+
         return self.dungeon_level
 
     def _build_simple_dungeon_level_in_steps(self):
@@ -142,3 +147,14 @@ class DungeonLevelBuilder:
         c = room.center()
         self.dungeon_level.tiles[c[0]][c[1]] = stair_tile
         return c
+
+    def place_monster(self, m):
+        i = randint(0, len(self.rooms) - 1)
+        room = self.rooms[i]
+        c = room.center()
+        if not any([entity for entity in self.dungeon_level.entities if entity.x == c[0] and entity.y == c[1]]):
+            m.x = c[0]
+            m.y = c[1]
+        else:
+            self.dungeon_level.entities.remove(m)
+            print('Tried to place monster over other monster!')
