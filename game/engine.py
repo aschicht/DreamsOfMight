@@ -74,6 +74,7 @@ class Engine:
             libtcod.sys_wait_for_event(libtcod.EVENT_KEY_PRESS, key, mouse, True)
             self.model.input_handler.handle_keys(key)
 
+            self.do_entities_actions()
             if self.model.exit:
                 return True
 
@@ -116,3 +117,8 @@ class Engine:
 
             # if fullscreen:
             #     libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
+
+    def do_entities_actions(self):
+        for e in self.model.current_map.get_entities():
+            e.take_action(self.model)
+

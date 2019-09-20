@@ -3,6 +3,8 @@ from enum import Enum
 
 import tcod as libtcod
 
+from combat_manager import CombatManager
+
 
 class HandlerType(Enum):
     MAP_HANDLER = 0
@@ -126,9 +128,18 @@ class MapConsoleHandler(ConsoleEventHandler, ConsoleActionHandler):
             player.move(dx, dy)
             self.engine_model.fov_recompute = True
         elif entity:
-            self.attack(entity)
+            self.attack(player, entity)
         else:
             print('Ouch!')
 
-    def attack(self, entity):
-        print('Die yeh bastard!')
+    def attack(self, player, entity):
+        damage = CombatManager.fight(player, entity)
+        if damage == 0:
+            pass
+        elif entity.hit_points - damage <= 0:
+            print('killed')
+            self.engine_model.current_map.entities.remove(entity)
+            self.engine_model.fov_recompute = True
+        else:
+            print('It is still standing!')
+            entity.hit_points = entity.hit_points - damage
